@@ -5,7 +5,7 @@
 # Source code repository: https://github.com/openwrt/openwrt / Branch: master
 #========================================================================================================================
 
-name: Build OpenWrt with official
+name: Build OpenWrt with custom kernel
 
 on:
   repository_dispatch:
