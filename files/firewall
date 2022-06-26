@@ -1,1 +1,221 @@
 
+config defaults
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option synflood_protect '1'
+
+config zone 'lan'
+	option name 'lan'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+	list network 'lan'
+	list network 'ovpnserver'
+	list network 'wgvpnserver'
+
+config zone 'wan'
+	option name 'wan'
+	option output 'ACCEPT'
+	option input 'ACCEPT'
+	option masq '1'
+	list network 'wan'
+	list network 'wan6'
+	list network 'usb3g'
+	option forward 'ACCEPT'
+
+config forwarding
+	option src 'lan'
+	option dest 'wan'
+
+config rule
+	option name 'Allow-DHCP-Renew'
+	option src 'wan'
+	option proto 'udp'
+	option dest_port '68'
+	option target 'ACCEPT'
+	option family 'ipv4'
+
+config rule
+	option name 'Allow-Ping'
+	option src 'wan'
+	option proto 'icmp'
+	option icmp_type 'echo-request'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-IGMP'
+	option src 'wan'
+	option proto 'igmp'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-DHCPv6'
+	option src 'wan'
+	option proto 'udp'
+	option src_ip 'fc00::/6'
+	option dest_ip 'fc00::/6'
+	option dest_port '546'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-MLD'
+	option src 'wan'
+	option proto 'icmp'
+	option src_ip 'fe80::/10'
+	list icmp_type '130/0'
+	list icmp_type '131/0'
+	list icmp_type '132/0'
+	list icmp_type '143/0'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ICMPv6-Input'
+	option src 'wan'
+	option proto 'icmp'
+	list icmp_type 'echo-request'
+	list icmp_type 'echo-reply'
+	list icmp_type 'destination-unreachable'
+	list icmp_type 'packet-too-big'
+	list icmp_type 'time-exceeded'
+	list icmp_type 'bad-header'
+	list icmp_type 'unknown-header-type'
+	list icmp_type 'router-solicitation'
+	list icmp_type 'neighbour-solicitation'
+	list icmp_type 'router-advertisement'
+	list icmp_type 'neighbour-advertisement'
+	option limit '1000/sec'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ICMPv6-Forward'
+	option src 'wan'
+	option dest '*'
+	option proto 'icmp'
+	list icmp_type 'echo-request'
+	list icmp_type 'echo-reply'
+	list icmp_type 'destination-unreachable'
+	list icmp_type 'packet-too-big'
+	list icmp_type 'time-exceeded'
+	list icmp_type 'bad-header'
+	list icmp_type 'unknown-header-type'
+	option limit '1000/sec'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-IPSec-ESP'
+	option src 'wan'
+	option dest 'lan'
+	option proto 'esp'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ISAKMP'
+	option src 'wan'
+	option dest 'lan'
+	option dest_port '500'
+	option proto 'udp'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Support-UDP-Traceroute'
+	option src 'wan'
+	option dest_port '33434:33689'
+	option proto 'udp'
+	option family 'ipv4'
+	option target 'REJECT'
+	option enabled '0'
+
+config include
+	option path '/etc/firewall.user'
+
+config rule
+	option name 'Access from WAN'
+	option src 'wan'
+	option src_port '443'
+	option dest 'lan'
+	option dest_port '443'
+	option target 'ACCEPT'
+	option enabled '0'
+
+config rule
+	option src 'wan'
+	option dest_port '3128'
+	option target 'ACCEPT'
+	option name 'Proxy-Server-443'
+	option src_port '443'
+	option enabled '0'
+
+config rule
+	option name 'Proxy-Server-80'
+	option src 'wan'
+	option src_port '80'
+	option dest_port '3128'
+	option target 'ACCEPT'
+	option enabled '0'
+
+config rule
+	option src 'wan'
+	option src_port '5990'
+	option dest_port '5990'
+	option target 'ACCEPT'
+	option name 'Allow-OPENVPN-Server'
+
+config rule 'wg'
+	option src 'wan'
+	option dest_port '51820'
+	option proto 'udp'
+	option target 'ACCEPT'
+	option src_port '51820'
+	option name 'Allow-WireGuardVPN-Server'
+
+config rule
+	option name 'Allow-SMB-445'
+	list proto 'tcp'
+	option src 'wan'
+	option src_port '445'
+	option dest 'lan'
+	option dest_port '445'
+	option target 'ACCEPT'
+	list dest_ip '192.168.1.1'
+
+config rule
+	option name 'Allow-SMB-139'
+	list proto 'tcp'
+	option src 'wan'
+	option src_port '139'
+	option dest 'lan'
+	list dest_ip '192.168.1.1'
+	option dest_port '139'
+	option target 'ACCEPT'
+
+config redirect
+	option target 'DNAT'
+	option name 'V2ray-80'
+	option src 'wan'
+	option src_dport '80'
+	option dest 'lan'
+	option dest_ip '192.168.3.1'
+	option dest_port '80'
+
+config redirect
+	option target 'DNAT'
+	option name 'v2ray-443'
+	option src 'wan'
+	option dest 'lan'
+	option dest_ip '192.168.3.1'
+	option src_dport '4431'
+	option dest_port '4431'
+
+config include 'v2ray'
+	option type 'script'
+	option path '/etc/firewall.v2ray'
+	option family 'any'
+	option reload '1'
+
