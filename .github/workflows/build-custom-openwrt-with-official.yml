@@ -14,7 +14,7 @@ on:
       openwrt_soc:
         description: "Select Amlogic SoC"
         required: false
-        default: "all"
+        default: "s905"
         type: choice
         options:
           - all
@@ -37,7 +37,7 @@ on:
       openwrt_kernel:
         description: "Select kernel version"
         required: false
-        default: "5.10.125_5.15.50"
+        default: "5.4.188"
         type: choice
         options:
           - 5.4.200_5.10.125
@@ -52,7 +52,7 @@ on:
       auto_kernel:
         description: "Auto use the latest kernel"
         required: false
-        default: true
+        default: false
         type: boolean
       openwrt_size:
         description: "Set the rootfs size(Unit: MiB)."
