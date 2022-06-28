@@ -43,6 +43,7 @@ on:
           - 5.4.200_5.10.125
           - 5.10.125_5.15.50
           - 5.15.45_5.18.5
+          - 5.4.188
           - 5.4.200
           - 5.10.125
           - 5.15.50
@@ -62,7 +63,7 @@ on:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: openwrt-22.03
+  REPO_BRANCH: openwrt-21.02.3
   FEEDS_CONF: router-config/openwrt-master/feeds.conf.default
   CONFIG_FILE: router-config/openwrt-master/.config
   DIY_P1_SH: router-config/openwrt-master/diy-part1.sh
