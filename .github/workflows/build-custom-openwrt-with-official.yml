@@ -46,10 +46,11 @@ on:
           - 5.4.188
           - 5.4.200
           - 5.4.201
+          - 5.10.120
           - 5.10.125
+          - 5.10.126
           - 5.15.50
           - 5.18.5
-          - 5.10.120
       auto_kernel:
         description: "Auto use the latest kernel"
         required: false
