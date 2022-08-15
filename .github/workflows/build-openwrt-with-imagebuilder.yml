@@ -17,9 +17,7 @@ on:
         default: "21.02.3"
         type: choice
         options:
-          - 22.03.0-rc5
-          - 22.03.0-rc4
-          - 22.03.0-rc1
+          - 22.03.0-rc6
           - 21.02.3
           - 19.07.10
           - 18.06.9
@@ -49,16 +47,18 @@ on:
       openwrt_kernel:
         description: "Select kernel version"
         required: false
-        default: "5.10.125_5.15.50"
+        default: "5.10.135_5.15.50"
         type: choice
         options:
-          - 5.4.200_5.10.125
-          - 5.10.125_5.15.50
-          - 5.15.45_5.18.5
-          - 5.4.200
-          - 5.10.125
+          - 5.4.210_5.10.135_5.15.50
+          - 5.4.210_5.10.135
+          - 5.10.135_5.15.50
+          - 5.15.50_5.19.1
+          - 5.4.210
+          - 5.10.135
           - 5.15.50
-          - 5.18.5
+          - 5.18.15
+          - 5.19.1
       auto_kernel:
         description: "Auto use the latest kernel"
         required: false
@@ -83,6 +83,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Initialization environment
+        id: init
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
@@ -92,7 +93,7 @@ jobs:
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
           sudo timedatectl set-timezone "${TZ}"
-          echo "COMPILE_STARTINGTIME=$(date +"%m.%d.%H%M")" >> $GITHUB_ENV
+          echo "::set-output name=status::success"
 
       - name: Build Rootfs with Image Builder
         id: imagebuilder
@@ -118,7 +119,7 @@ jobs:
         uses: ncipollo/release-action@main
         if: env.PACKAGED_STATUS == 'success' && !cancelled()
         with:
-          tag: openwrt_amlogic_s9xxx_imagebuilder_${{ env.RELEASES_BRANCH }}_${{ env.PACKAGED_OUTPUTDATE }}
+          tag: OpenWrt_Aml_imagebuilder_${{ env.RELEASES_BRANCH }}_${{ env.PACKAGED_OUTPUTDATE }}
           artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
           allowUpdates: true
           token: ${{ secrets.GH_TOKEN }}
